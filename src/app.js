@@ -1,14 +1,46 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
-// const authRoutes = require('./routes/authRoutes');
-// const employeeRoutes = require('./routes/employeeRoutes');
-// const jobRoutes = require('./routes/jobRoutes');
+const bodyParser = require('body-parser');
+const userRoute = require('./routes/userRoute');
+const jobRoute = require('./routes/jobRoute');
+const employeeRoute = require('./routes/employeeRoute');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+const fileRoute = require('./routes/fileRoute');
 
 const app = express();
 
-app.use(cors());
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,HEAD');
+//   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Accept, Content-Type, Authorization', 'application/json');
+
+//   // preflight request
+//   if (req.method === 'OPTIONS') {
+//     return res.status(200).end();
+//   } else {
+//     next();
+//   }
+// });
+
+// Konfigurasi CORS
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // Hanya mengizinkan frontend React di port 5173
+    credentials: true, // Mengizinkan pengiriman cookie atau header khusus seperti Authorization
+  })
+);
+
 app.use(bodyParser.json());
+app.use(cookieParser());
+
+// middleware untuk foto (open di browser)
+app.use('/uploads', express.static('uploads'));
+
+app.use('/api', userRoute);
+app.use('/api', jobRoute);
+app.use('/api', employeeRoute);
+app.use('/api', fileRoute);
 
 // app.use('/api/auth', authRoutes);
 // app.use('/api/employees', employeeRoutes);
